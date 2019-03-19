@@ -15,6 +15,7 @@
   <material name="green">
     <color rgba="0 1 0 1"/>
   </material> -->
+  <xacro:include filename="$(find my_robot)/urdf/my_robot.gazebo" />
 
   <link name="robot_footprint"></link>
 
