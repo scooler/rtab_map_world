@@ -25,6 +25,11 @@ bool handle_drive_request(ball_chaser::DriveToTarget::Request& req,
 
     geometry_msgs::Twist motor_command;
 
+    motor_command.linear.x = - req.angular_z;
+    motor_command.angular.z = - req.linear_x;
+
+    _motor_command_publisher.publish(motor_command);
+
     // // Check if requested joint angles are in the safe zone, otherwise clamp them
     // std::vector<float> joints_angles = clamp_at_boundaries(req.joint_1, req.joint_2);
 
