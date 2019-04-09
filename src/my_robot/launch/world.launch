@@ -3,7 +3,7 @@
 <launch>
 
   <!-- World File -->
-  <arg name="world_file" default="$(find my_robot)/worlds/world3.world"/>
+  <arg name="world_file" default="$(find my_robot)/worlds/world4.world"/>
 
   <!-- Robot pose -->
   <arg name="x" default="5"/>
