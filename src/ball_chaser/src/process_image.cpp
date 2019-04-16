@@ -60,13 +60,13 @@ void ProcessImage::process_image_callback(const sensor_msgs::Image img)
 
     if (ballPosition < img.step / 3){
       ROS_INFO_THROTTLE(1, "Driving to left");
-      // drive_robot(0, 1); // turn left
+      drive_robot(0, 1); // turn left
     } else if (ballPosition < img.step*2 / 3) {
       ROS_INFO_THROTTLE(1, "Driving forward");
-      // drive_robot(1, 0); // drive forward
+      drive_robot(1, 0); // drive forward
     } else {
       ROS_INFO_THROTTLE(1, "Driving right");
-      // drive_robot(0, -1); // turn right
+      drive_robot(0, -1); // turn right
     }
 
   }
@@ -74,8 +74,6 @@ void ProcessImage::process_image_callback(const sensor_msgs::Image img)
 void ProcessImage::drive_robot(float lin_x, float ang_z){
 
     // ROS_INFO("Driving Bot lin_x: %10.4f , ang_z: %10.4f", lin_x, ang_z);
-
-    // TODO: Request a service and pass the velocities to it to drive the robot
 
     ball_chaser::DriveToTarget srv;
     srv.request.linear_x = lin_x;
