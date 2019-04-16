@@ -2,20 +2,6 @@
 #include "ball_chaser/DriveToTarget.h"
 #include <sensor_msgs/Image.h>
 
-
-// This callback function continuously executes and reads the image data
-// void process_image_callback(const sensor_msgs::Image img)
-// {
-
-//     ROS_INFO("Callback!");
-//     int white_pixel = 255;
-
-//     // TODO: Loop through each pixel in the image and check if there's a bright white one
-//     // Then, identify if this pixel falls in the left, mid, or right side of the image
-//     // Depending on the white ball position, call the drive_bot function and pass velocities to it
-//     // Request a stop when there's no white ball seen by the camera
-// }
-
 class ProcessImage{
 
 public:
@@ -47,30 +33,9 @@ private:
   ros::Subscriber _sub1;
   ros::NodeHandle &_nh;
 
-  // void drive_robot(float lin_x, float ang_z){
-  //     ROS_INFO("Driving Bot lin_x: %10.4f , ang_z: %10.4f", lin_x, ang_z);
-  //     // TODO: Request a service and pass the velocities to it to drive the robot
+  void drive_robot(float lin_x, float ang_z);
 
-  //     ball_chaser::DriveToTarget srv;
-  //     srv.request.linear_x = lin_x;
-  //     srv.request.angular_z = ang_z;
-
-  //     if (!_client.call(srv)) {
-  //         ROS_ERROR("Failed to call service to drive_robot");
-  //     };
-  // }
-
-
-  // uint32_t findBall(const sensor_msgs::Image img) {
-
-  //   int white_pixel = 255;
-  //   for (int i = 0; i < img.height * img.step; i++) {
-  //       if (img.data[i] == white_pixel) {
-  //         return i;// % img.step;
-  //       }
-  //   }
-  //   return -1;
-  // }
+  uint32_t findBall(const sensor_msgs::Image img);
 };
 
 ProcessImage::ProcessImage(ros::NodeHandle &nh):
@@ -84,26 +49,55 @@ ProcessImage::ProcessImage(ros::NodeHandle &nh):
 void ProcessImage::process_image_callback(const sensor_msgs::Image img)
   {
 
-    ROS_INFO("Callback called");
-    // uint32_t ballPosition = findBall(img);
-    // // ROS_INFO_THROTTLE(1, "Found position %zu", ballPosition);
-    // if (ballPosition <= 0) {
-    //   return; // don't do anything
-    // }
+    ROS_INFO_THROTTLE(1, "Callback called");
+    uint32_t ballPosition = findBall(img);
+    if (ballPosition == 0) {
+      ROS_INFO_THROTTLE(1, "No Ball - Stop Robot");
+      drive_robot(0, 0);
+      return; // don't do anything
+    }
+    ROS_INFO_THROTTLE(1, "Found position %zu", ballPosition);
 
-    // if (ballPosition < img.width / 3){
-    //   ROS_INFO_THROTTLE(1, "Driving to left");
-    //   drive_robot(0, 1); // turn left
-    // } else if (ballPosition < img.width*2 / 3) {
-    //   ROS_INFO_THROTTLE(1, "Driving forward");
-    //   drive_robot(1, 0); // drive forward
-    // } else {
-    //   ROS_INFO_THROTTLE(1, "Driving right");
-    //   drive_robot(0, -1); // turn right
-    // }
+    if (ballPosition < img.step / 3){
+      ROS_INFO_THROTTLE(1, "Driving to left");
+      // drive_robot(0, 1); // turn left
+    } else if (ballPosition < img.step*2 / 3) {
+      ROS_INFO_THROTTLE(1, "Driving forward");
+      // drive_robot(1, 0); // drive forward
+    } else {
+      ROS_INFO_THROTTLE(1, "Driving right");
+      // drive_robot(0, -1); // turn right
+    }
 
   }
 
+void ProcessImage::drive_robot(float lin_x, float ang_z){
+
+    // ROS_INFO("Driving Bot lin_x: %10.4f , ang_z: %10.4f", lin_x, ang_z);
+
+    // TODO: Request a service and pass the velocities to it to drive the robot
+
+    ball_chaser::DriveToTarget srv;
+    srv.request.linear_x = lin_x;
+    srv.request.angular_z = ang_z;
+
+    if (!_client.call(srv)) {
+        ROS_ERROR("Failed to call service to drive_robot");
+    };
+}
+
+
+uint32_t ProcessImage::findBall(const sensor_msgs::Image img) {
+
+  int white_pixel = 255;
+  for (int i = 0; i < img.height * img.step; i++) {
+      if (img.data[i] == white_pixel) {
+        ROS_INFO_THROTTLE(1, "Found white in pixel %d with img.step: %d ", i, img.step);
+        return (i % img.step) + 1; // +1 so that it's NEVER 0 - 0 being "NOT FOUND"
+      }
+  }
+  return 0;
+}
 
 int main(int argc, char** argv)
 {
