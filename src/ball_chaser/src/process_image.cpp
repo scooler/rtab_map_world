@@ -7,28 +7,9 @@ class ProcessImage{
 public:
   ProcessImage(ros::NodeHandle &nh);
   void process_image_callback(const sensor_msgs::Image img);
-  // {
-
-  //   // Define a client service capable of requesting services from safe_move
-  //   _client = nh.serviceClient<ball_chaser::DriveToTarget>("/ball_chaser/command_robot");
-
-  //   // ros::Subscriber sub = _n.subscribe("/camera/rgb/image_raw", 10, &ProcessImage::process_image_callback, this);
-
-  //   // ros::Subscriber sub1 = _n.subscribe("/camera/rgb/image_raw", 10, &ProcessImage::process_image_callback, this);
-
-
-  //   // ros::NodeHandle n;
-  //   // ros::Subscriber sub1 = _n.subscribe("/camera/rgb/image_raw", 10, process_image_callback);
-  //   ros::Subscriber sub1 = nh.subscribe("/camera/rgb/image_raw", 10, &ProcessImage::process_image_callback, this);
-
-  //   ROS_INFO("Ready to process_image15");
-  // }
 
 private:
 
-// Define global vector of joints last position, moving state of the arm, and the client that can request services
-  // std::vector<double> joints_last_position{ 0, 0 };
-  // bool moving_state = false;
   ros::ServiceClient _client;
   ros::Subscriber _sub1;
   ros::NodeHandle &_nh;
@@ -39,40 +20,39 @@ private:
 };
 
 ProcessImage::ProcessImage(ros::NodeHandle &nh):
-    _nh(nh),
-    _client(nh.serviceClient<ball_chaser::DriveToTarget>("/ball_chaser/command_robot")),
-    _sub1(nh.subscribe("/camera/rgb/image_raw", 10, &ProcessImage::process_image_callback, this))
-    {
-      ROS_INFO("Ready to process_image16");
-    }
+  _nh(nh),
+  _client(nh.serviceClient<ball_chaser::DriveToTarget>("/ball_chaser/command_robot")),
+  _sub1(nh.subscribe("/camera/rgb/image_raw", 10, &ProcessImage::process_image_callback, this))
+{
+  // _sub1 = nh.subscribe("/camera/rgb/image_raw", 10, &ProcessImage::process_image_callback, this); // this works too ...
+  ROS_INFO("Ready to process_image16");
+}
 
-void ProcessImage::process_image_callback(const sensor_msgs::Image img)
-  {
+void ProcessImage::process_image_callback(const sensor_msgs::Image img) {
 
-    ROS_INFO_THROTTLE(1, "Callback called");
-    uint32_t ballPosition = findBall(img);
-    if (ballPosition == 0) {
-      ROS_INFO_THROTTLE(1, "No Ball - Stop Robot");
-      drive_robot(0, 0);
-      return; // don't do anything
-    }
-    ROS_INFO_THROTTLE(1, "Found position %zu", ballPosition);
+  ROS_INFO_THROTTLE(1, "Callback called");
+  uint32_t ballPosition = findBall(img);
+  if (ballPosition == 0) {
+    ROS_INFO_THROTTLE(1, "No Ball - Stop Robot");
+    drive_robot(0, 0);
+    return; // don't do anything
+  }
+  ROS_INFO_THROTTLE(1, "Found position %zu", ballPosition);
 
-    if (ballPosition < img.step / 3){
-      ROS_INFO_THROTTLE(1, "Driving to left");
-      drive_robot(0, 1); // turn left
-    } else if (ballPosition < img.step*2 / 3) {
-      ROS_INFO_THROTTLE(1, "Driving forward");
-      drive_robot(1, 0); // drive forward
-    } else {
-      ROS_INFO_THROTTLE(1, "Driving right");
-      drive_robot(0, -1); // turn right
-    }
-
+  if (ballPosition < img.step / 3){
+    ROS_INFO_THROTTLE(1, "Driving to left");
+    drive_robot(0, 1); // turn left
+  } else if (ballPosition < img.step*2 / 3) {
+    ROS_INFO_THROTTLE(1, "Driving forward");
+    drive_robot(1, 0); // drive forward
+  } else {
+    ROS_INFO_THROTTLE(1, "Driving right");
+    drive_robot(0, -1); // turn right
   }
 
-void ProcessImage::drive_robot(float lin_x, float ang_z){
+}
 
+void ProcessImage::drive_robot(float lin_x, float ang_z){
     // ROS_INFO("Driving Bot lin_x: %10.4f , ang_z: %10.4f", lin_x, ang_z);
 
     ball_chaser::DriveToTarget srv;
@@ -114,22 +94,3 @@ int main(int argc, char** argv)
     return 0;
 }
 
-
-
-
-// int main(int argc, char** argv)
-// {
-//     // Initialize the process_image node and create a handle to it
-//     ros::init(argc, argv, "process_image");
-
-//     // Define a client service capable of requesting services from command_robot
-//     client = n.serviceClient<ball_chaser::DriveToTarget>("/ball_chaser/command_robot");
-
-//     // Subscribe to /camera/rgb/image_raw topic to read the image data inside the process_image_callback function
-//     ros::Subscriber sub1 = n.subscribe("/camera/rgb/image_raw", 10, process_image_callback);
-
-//     // Handle ROS communication events
-//     ros::spin();
-
-//     return 0;
-// }
