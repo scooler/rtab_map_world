@@ -25,8 +25,8 @@ bool handle_drive_request(ball_chaser::DriveToTarget::Request& req,
 
     geometry_msgs::Twist motor_command;
 
-    motor_command.linear.x = - req.angular_z;
-    motor_command.angular.z = - req.linear_x;
+    motor_command.linear.x = req.linear_x;
+    motor_command.angular.z = req.angular_z;
 
     _motor_command_publisher.publish(motor_command);
 
