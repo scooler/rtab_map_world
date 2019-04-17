@@ -68,8 +68,8 @@ void ProcessImage::drive_robot(float lin_x, float ang_z){
 uint32_t ProcessImage::findBall(const sensor_msgs::Image img) {
 
   int white_pixel = 255;
-  for (int i = 0; i < img.height * img.step; i++) {
-      if (img.data[i] == white_pixel) {
+  for (int i = 0; i < img.height * img.step; i+= 3) {
+      if (img.data[i] == white_pixel && img.data[i+1] == white_pixel && img.data[i+2] == white_pixel) {
         ROS_INFO_THROTTLE(1, "Found white in pixel %d with img.step: %d ", i, img.step);
         return (i % img.step) + 1; // +1 so that it's NEVER 0 - 0 being "NOT FOUND"
       }
