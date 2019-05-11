@@ -9,6 +9,8 @@ Only now looking back I see that the "cloud of particles" was pretty big. That's
 ![Screenshot1](./run_1/screenshot1.png)
 ![Screenshot2](./run_1/screenshot2.png)
 
+-----------------
+
 ### Run 2
 
 The map wasn't related properly to odom frame, so on screenshot1 particles are cast pretty wide - MCL is pretty confused XD.
@@ -17,6 +19,7 @@ The map wasn't related properly to odom frame, so on screenshot1 particles are c
 But once map is more in place it gets more narrow. I've also started tunning (with the `update_min_a` as default of PI/6 - aka 30deg seems pretty big)
 ![Screenshot2](./run_2/screenshot2.png)
 
+-----------------
 
 ### Run 3 (or something :sweat:)
 
@@ -26,6 +29,7 @@ Similar to how it happens in Run 2 - if map isn't in place particles tend to "be
 But once it snaps in place - they look nice:
 ![Screenshot2](./run_3/screenshot2.png)
 
+-----------------
 
 ### Run n
 
