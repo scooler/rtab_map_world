@@ -1,9 +1,8 @@
-# Chasing Robot
+# WhereAmI Robot
 
-It's a toy project. A gazebo world with some simple models. Robot model in xacro format - that was a bit more tricky.
+Based on previous [ChasingRobot](https://github.com/scooler/chasing_robot)
 
-Finally some code to drive it around, and make it chase a white ball (a pixel really - there is no concept of a ball there).
-So it just "goes towards the light" :D
+This one uses localization.
 
 ## Build
 
