@@ -28,6 +28,9 @@
     <param name="max_particles" value="1000" />
     <param name="update_min_a" value="0.261799" /> <!-- update every PI/12 rotation (1/2 of the default) - PI/6 is what 30deg ? that's A LOT, 15deg isn't small even -->
 
+    <param name="laser_max_beams" value="60" />
+
+
   </node>
 </launch>
 
